@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pantalla de Inicio</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="CSS/Styles.css"> <!-- Enlaza tu archivo CSS -->
+</head>
+<body>
+    <div id="app">
+        <!-- Pantalla inicial -->
+        <div v-if="mostrarPantallaInicial" class="pantalla-inicial" @click="mostrarPantallaInicial = false" style="cursor: pointer;">
+            <div class="recuadro-inicial">
+                <div class="image-container">
+                    <img src="Imagenes/DQ.jpg" alt="Imagen de bienvenida">
+                </div>
+                <div class="texto-bienvenida">
+                    <h1 class="mb-3">Bienvenido</h1>
+                    <p class="text-muted">Haz clic en cualquier parte para ingresar</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido principal -->
+        <div v-else class="container-fluid contenido-principal">
+            <!-- Fondo oscuro cuando el buscador está abierto -->
+            <div v-if="buscadorAbierto" class="fondo-oscuro" @click="toggleBuscador"></div>
+
+            <!-- Contenedor del buscador -->
+            <div class="contenedor-buscador-alumnos" :class="{ 'buscador-abierto': buscadorAbierto }">
+                <!-- Buscador desplegable con la tabla de alumnos -->
+                <div class="buscador-desplegable">
+                    <input type="text" v-model="busqueda" class="form-control mb-2" placeholder="Buscar por código, nombre o distrito">
+                    <!-- Mensaje cuando no se encuentran alumnos -->
+                    <div v-if="alumnosFiltrados.length === 0" class="mensaje-no-encontrado">
+                        <p>No se encontró ningún alumno.</p>
+                    </div>
+                    <!-- Tabla de alumnos -->
+                    <table v-else class="table table-hover table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>CÓDIGO</th>
+                                <th>NOMBRE</th>
+                                <th>DIRECCIÓN</th>
+                                <th>MUNICIPIO</th>
+                                <th>DISTRITO</th>
+                                <th>TELÉFONO</th>
+                                <th>F. NAC.</th>
+                                <th>SEXO</th>
+                                <th>ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="alumno in alumnosFiltrados" @click="verAlumno(alumno)" :key="alumno.codigo">
+                                <td>{{ alumno.codigo }}</td>
+                                <td>{{ alumno.nombre }}</td>
+                                <td>{{ alumno.direccion }}</td>
+                                <td>{{ alumno.municipio }}</td>
+                                <td>{{ alumno.distrito }}</td>
+                                <td>{{ alumno.telefono }}</td>
+                                <td>{{ alumno.fechaNacimiento }}</td>
+                                <td>{{ alumno.sexo }}</td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm" @click.stop="eliminarAlumno(alumno)">DEL</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Botones en la esquina superior derecha -->
+            <div class="botones-superiores">
+                <button @click="toggleBuscador" class="boton-buscador" :class="{ 'reproduciendo': buscadorAbierto }" ref="botonBuscador">
+                    <i class="bi bi-search">🔍</i>
+                </button>
+                <button @click="reproducirMusica" class="boton-musica" ref="botonMusica">
+                    <i class="bi bi-music-note">🎶</i>
+                </button>
+            </div>
+
+            <!-- Pantalla del formulario de registro -->
+            <div class="pantalla-formulario-registro">
+                <div class="recuadro-formulario-registro">
+                    <div class="card mb-3">
+                        <!-- Encabezado del formulario -->
+                        <div class="card-header text-center">
+                            <h3 class="mb-0">Registro</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="frmAlumno" name="frmAlumno" @submit.prevent="guardarAlumno">
+                                <div class="row p-1">
+                                    <div class="col-12 col-md-2">CÓDIGO</div>
+                                    <div class="col-12 col-md-4">
+                                        <input required v-model="codigo" type="text" class="form-control" maxlength="10" pattern="[A-Za-z0-9]{1,10}" title="El código debe contener solo letras y números, con un máximo de 10 caracteres.">
+                                    </div>
+                                </div>
+                                <div class="row p-1">
+                                    <div class="col-12 col-md-2">NOMBRE</div>
+                                    <div class="col-12 col-md-8">
+                                        <input required pattern="[A-Za-zñÑáéíóú ]{1,50}" v-model="nombre" type="text" class="form-control" maxlength="50" title="El nombre solo debe contener letras y espacios, con un máximo de 50 caracteres.">
+                                    </div>
+                                </div>
+                                <div class="row p-1">
+                                    <div class="col-12 col-md-2">DIRECCIÓN</div>
+                                    <div class="col-12 col-md-8">
+                                        <input required v-model="direccion" type="text" class="form-control" maxlength="50" title="La dirección puede contener letras, números y espacios, con un máximo de 50 caracteres.">
+                                    </div>
+                                </div>
+                                <div class="row p-1">
+                                    <div class="col-12 col-md-2">MUNICIPIO</div>
+                                    <div class="col-12 col-md-8">
+                                        <select required v-model="municipio" @change="cargarDistritos" class="form-control">
+                                            <option value="">Seleccione un municipio</option>
+                                            <option v-for="(distritos, municipio) in municipios" :key="municipio" :value="municipio">{{ municipio }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row p-1">
+                                    <div class="col-12 col-md-2">DISTRITO</div>
+                                    <div class="col-12 col-md-8">
+                                        <select required v-model="distrito" class="form-control" :disabled="!municipio">
+                                            <option value="">Seleccione un distrito</option>
+                                            <option v-for="distrito in distritosFiltrados" :key="distrito" :value="distrito">{{ distrito }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row p-1">
+                                    <div class="col-12 col-md-2">TELÉFONO</div>
+                                    <div class="col-12 col-md-4">
+                                        <input required v-model="telefono" type="text" class="form-control" maxlength="30" pattern="[\d\s\-\+]{1,30}" title="El teléfono debe contener solo números, espacios, guiones y signos de más, con un máximo de 30 caracteres.">
+                                    </div>
+                                </div>
+                                <div class="row p-1">
+                                    <div class="col-3 col-md-2">FECHA NAC.</div>
+                                    <div class="col-9 col-md-4">
+                                        <input v-model="fechaNacimiento" type="date" name="txtFechaNacimientoAlumno" id="txtFechaNacimientoAlumno" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="row p-1">
+                                    <div class="col-12 col-md-2">SEXO</div>
+                                    <div class="col-12 col-md-4">
+                                        <input v-model="sexo" type="text" class="form-control" placeholder="Ejemplo: Masculino, Femenino, Otro" maxlength="30" title="El sexo debe ser una palabra con un máximo de 30 caracteres.">
+                                    </div>
+                                </div>
+                                <!-- Botones de Guardar y Nuevo -->
+                                <div class="text-center mt-3">
+                                    <input type="submit" value="Guardar" class="btn btn-primary me-2">
+                                    <input type="reset" value="Nuevo" class="btn btn-warning" @click="limpiarFormulario">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reproductor de audio -->
+            <audio ref="audio" loop>
+                <source src="Music/Ellen.mp3" type="audio/mp3">
+                Tu navegador no soporta la reproducción de audio.
+            </audio>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="main.js"></script> <!-- Enlaza tu archivo JavaScript -->
+</body>
+</html>
