@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comunicado Digital</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff;
+    }
+    header {
+      background-color: #0d5c9b;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      position: fixed;
+      top: 0;
+      left: 0;
+     right: 0;
+     z-index: 1000;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+    .logo img {
+      height: 50px;
+      margin-right: 10px;
+    }
+    barra {
+      background-color: #bebaba;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px;
+      font-weight: bold;
+      position: fixed;
+      top: 70px;
+      left: 0;
+      right: 0;
+      z-index: 999;
+    }
+    .publicidad {
+      display: flex;
+      padding: 20px;
+      display: flex;
+      padding: 20px;
+      margin-top: 130px;
+      height: calc(100vh - 130px);
+      overflow-y: auto;
+    }
+    .principales {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      flex: 3;
+    }
+    .news-card {
+      background-color: white;
+      border: 1px solid #ccc;
+      padding: 70px;
+    }
+    .news-card img {
+      width: 100%;
+      background-color: #a5b4fc;
+      height: 150px;
+      object-fit: cover;
+    }
+    .news-card h3 {
+      margin-top: 10px;
+    }
+    .lomasvisto {
+      flex: 1;
+      margin-left: 20px;
+    }
+    .lomasvisto h3 {
+      margin-bottom: 10px;
+      border-bottom: 2px solid black;
+    }
+    .lomasvisto-item {
+      display: flex;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+    .lomasvisto-item img {
+      width: 50px;
+      height: 50px;
+      background-color: #a5b4fc;
+      margin-right: 10px;
+    }
+    .redes {
+      margin-left: 500px;
+    }
+    .informacion {
+      margin-right: 45px;
+    }
+    .Buscador {
+    position: relative;
+    width: 200px;
+  }
+
+  .Buscador input {
+    width: 100%;
+    padding: 8px 8px 8px 35px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+
+  .Buscador img {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    pointer-events: none;
+  }
+
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="imagenes/logo.png" alt="logo">
+    </div>
+    <div class="redes">
+      <a target="_blank" href="https://www.instagram.com/"><img src="imagenes/instagram.png" height="35"/></a>
+      <a target="_blank" href="https://www.facebook.com/"><img src="imagenes/facebook.png" height="35" style="margin-left: 12px;"/></a>
+      <a target="_blank" href="https://x.com/?lang=es"><img src="imagenes/X.png" height="35" style="margin-left: 10px;"/></a>
+    </div>
+    <div class="informacion">
+      <a href="#" style="margin-left: 15px; color: #ffffff;">Contacto</a>
+      <a href="#" style="margin-left: 15px; color: #ffffff;">Sobre Nosotros</a>
+      <a href="login.html" style="margin-left: 15px; color: #ffffff;">Iniciar Sesión</a>
+    </div>
+  </header>
+
+  <barra>
+    <a href="#" style="color: #000000;">Inicio</a>
+    <a href="#"style="color: #000000;">Destacado</a>
+    <a href="#"style="color: #000000;">Deportes</a>
+    <a href="#"style="color: #000000;">Educación</a>
+    <a href="#"style="color: #000000;">Turismo</a>
+    <form action="/transporte/search" method="post">
+      <div class="Buscador">
+        <img src="imagenes/lupa.png" alt="Buscar">
+        <input type="text" name="keyword" placeholder="Buscar" required>
+      </div>
+    </form>
+  </barra>
+
+  <div class="publicidad">
+    <div class="principales">
+      <div class="news-card">
+        <img alt="Noticia" />
+        <h3>Titulo de la Noticia</h3>
+        <p>Descripción de la noticia</p>
+      </div>
+      <div class="news-card">
+        <img alt="Noticia" />
+        <h3>Titulo de la Noticia</h3>
+        <p>Descripción de la noticia</p>
+      </div>
+      <div class="news-card">
+        <img alt="Noticia" />
+        <h3>Titulo de la Noticia</h3>
+        <p>Descripción de la noticia</p>
+      </div>
+      <div class="news-card">
+        <img alt="Noticia" />
+        <h3>Titulo de la Noticia</h3>
+        <p>Descripción de la noticia</p>
+      </div>
+      <div class="news-card">
+        <img alt="Noticia" />
+        <h3>Titulo de la Noticia</h3>
+        <p>Descripción de la noticia</p>
+      </div>
+      <div class="news-card">
+        <img alt="Noticia" />
+        <h3>Titulo de la Noticia</h3>
+        <p>Descripción de la noticia</p>
+      </div>
+      <div class="news-card">
+        <img alt="Noticia" />
+        <h3>Titulo de la Noticia</h3>
+        <p>Descripción de la noticia</p>
+      </div>
+      <div class="news-card">
+        <img alt="Noticia" />
+        <h3>Titulo de la Noticia 1</h3>
+        <p>Descripción de la noticia</p>
+      </div>
+    </div>
+
+    <aside class="lomasvisto">
+      <h3>Lo más visto</h3>
+      <div class="lomasvisto-item">
+        <img alt="Noticias" />
+        <p>Descripción del contenido</p>
+      </div>
+      <div class="lomasvisto-item">
+        <img alt="Noticias" />
+        <p>Descripción del contenido</p>
+      </div>
+      <div class="lomasvisto-item">
+        <img alt="Noticias" />
+        <p>Descripción del contenido</p>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>
