@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device=width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Registro</title>
     <style>
         body {
@@ -22,7 +22,7 @@
             font-size: 24px;
             font-weight: bold;
         }
-        .logo img{
+        .logo img {
             height: 50px;
             margin-right: 10px;
         }
@@ -40,7 +40,7 @@
             padding: 40px;
             margin-top: 20px;
         }
-        .formulario, .admin{
+        .formulario, .admin {
             border: 2px solid #000;
             padding: 25px;
             border-radius: 10px;
@@ -50,7 +50,7 @@
             text-align: center;
             margin-bottom: 10px;
         }
-        .formulario p{
+        .formulario p {
             text-align: center;
             margin-bottom: 20px;
         }
@@ -59,7 +59,7 @@
         input[type="password"] {
             width: 100%;
             padding: 10px;
-            margin-top: 8p;
+            margin-top: 8px;
             background-color: #d9d9d9;
             border: none;
             border-radius: 5px;
@@ -78,7 +78,7 @@
             cursor: pointer;
             background-color: #f0f0f0;
             border-radius: 5px;
-            font-weight: hold;
+            font-weight: bold;
         }
         .botones img {
             height: 20px;
@@ -145,7 +145,7 @@
             <label>Nombre y Apellido</label>
             <input type="text" id="nombre" required>
 
-            <label>Correo Electronico</label>
+            <label>Correo Electrónico</label>
             <input type="email" id="correo" required>
 
             <label>Contraseña</label>
@@ -161,48 +161,49 @@
 
             <div class="terminos">
                 <input type="checkbox" required>
-                <label>He leido y acepto los términos y condiciones</label>
+                <label>He leído y acepto los términos y condiciones</label>
             </div>
 
             <button class="continuar" id="btnContinuar">Continuar</button>
-            </div>
-
-            <div class="admin">
-                <h4>¿Eres administrador?</h4>
-                <p>Ingresa elcódigo que se te proporcionó</p>
-                <input type="text">
-                <button>Verificar</button>
-            </div>
         </div>
 
-        <script>
-            window.onload = function () {
-                document.getElementById("btnContinuar").addEventListener("click", function (e) {
+        <div class="admin">
+            <h4>¿Eres administrador?</h4>
+            <p>Ingresa el código que se te proporcionó</p>
+            <input type="text">
+            <button>Verificar</button>
+        </div>
+    </div>
+
+    <!-- Script al final para asegurar que el DOM esté cargado -->
+    <script>
+        window.onload = function () {
+            document.getElementById("btnContinuar").addEventListener("click", function (e) {
                 e.preventDefault();
-        
+
                 const nombre = document.getElementById("nombre").value.trim();
                 const correo = document.getElementById("correo").value.trim();
                 const contraseña = document.getElementById("contraseña").value;
                 const repetir = document.getElementById("repetir").value;
-        
-                if (!nombre || !correo || !contraseña || !repetir) {
-                    alert("Por favor, copleta todos los campos");
-                    return;
-            }
 
-            if (contraseña !== repetir) {
-                    alert("Las contraseñas no coinciden.");
-                    return;     
+                if (!nombre || !correo || !contraseña || !repetir) {
+                    alert("Por favor, completa todos los campos");
+                    return;
                 }
-        
+
+                if (contraseña !== repetir) {
+                    alert("Las contraseñas no coinciden.");
+                    return;
+                }
+
                 const codigo = Math.floor(100000 + Math.random() * 900000);
                 localStorage.setItem("codigo_verificacion", codigo);
                 localStorage.setItem("correo_usuario", correo);
-        
+
                 alert("Se ha enviado un código de verificación a: " + correo);
-                window.localtion.href = "verificar-codigo-html";
+                window.location.href = "verificar-codigo.html";
             });
         };
-        </script>
+    </script>
 </body>
 </html>
