@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Denuncias Ciudadanas</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      background-color: #0d5c9b;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+    .logo img {
+      height: 50px;
+      margin-right: 10px;
+    }
+    
+
+    barra {
+      background-color: #ccc;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px;
+    }
+
+    barra a {
+      text-decoration: none;
+      font-weight: bold;
+      color: #000;
+    }
+    .redes {
+      margin-left: 500px;
+    }
+    .informacion {
+      margin-right: 45px;
+    }
+    .denuncias {
+      background-color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+    }
+    hr {
+      border: 1px solid black;
+      width: 600px;
+      margin-bottom: 20px;
+      margin-left: 5px;
+    }
+
+    .contenedor {
+      display: flex;
+      padding: 40px;
+      gap: 40px;
+    }
+
+    .denuncia {
+      width: 45%;
+    }
+
+    .denuncia img {
+      width: 100%;
+      background-color: #a0bfff;
+      height: 200px;
+      display: block;
+      margin-bottom: 30px;
+    }
+
+    .comentarios {
+      width: 35%;
+      border: 2px solid #000;
+      border-radius: 12px;
+      padding: 20px;
+      margin-left: 70px;
+    }
+
+    .comentarios h3 {
+      margin-top: 0;
+    }
+
+    .comentario {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .comentario .avatar {
+      width: 40px;
+      height: 40px;
+      background-color: #a0bfff;
+      border-radius: 60%;
+      margin-right: 10px;
+    }
+
+    .comentario .contenido {
+      background-color: #ddd;
+      padding: 10px;
+      border-radius: 8px;
+      width: 100%;
+    }
+
+    .input-comentario {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .input-comentario input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .input-comentario button {
+      background-color: #0d5c9b;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 15px;
+      cursor: pointer;
+    }
+    .Buscador {
+    position: relative;
+    width: 200px;
+  }
+
+  .Buscador input {
+    width: 100%;
+    padding: 8px 8px 8px 35px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+
+  .Buscador img {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    pointer-events: none;
+  }
+  .denuncia-noticias {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    border-top: 2px solid black;
+    padding-top: 10px;
+  }
+
+  .iconos-noticias {
+    display: flex;
+    gap: 15px;
+  }
+
+  .iconos-noticias img {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+  }
+  a {
+  text-decoration: none;
+  }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo"> <!-- Arregle algo que estaba aqui -->
+      <img src="imagenes/logo.png" alt="logo">
+    </div>
+    <div class="redes">
+      <a target="_blank" href="https://www.instagram.com/"><img src="imagenes/instagram.png" height="35"/></a>
+      <a target="_blank" href="https://www.facebook.com/"><img src="imagenes/facebook.png" height="35" style="margin-left: 12px;"/></a>
+      <a target="_blank" href="https://x.com/?lang=es"><img src="imagenes/X.png" height="35" style="margin-left: 10px;"/></a>
+    </div>
+    <div class="informacion">
+    <a href="#" style="margin-left: 15px; color: #ffffff;">Contacto</a>
+    <a href="sobrenosotros.html" style="margin-left: 15px; color: #ffffff;">Sobre Nosotros</a>
+    <a href="login.html" style="margin-left: 15px; color: #ffffff;">Iniciar Sesión</a>
+    </div>
+  </header>
+
+  <barra>
+    <a href="#">Destacado</a>
+    <a href="#">Deportes</a>
+    <a href="#">Educación</a>
+    <a href="#">Turismo</a>
+    <a href="#" class="denuncias">Denuncias Ciudadanas</a>
+    <div class="Buscador">
+      <img src="imagenes/lupa.png" alt="Buscar">
+      <input type="text" name="keyword" placeholder="Buscar" required>
+    </div>
+  </barra>
+
+  <div class="contenedor">
+    <div class="denuncia">
+      <h2>Denuncias Ciudadanas</h2>
+      <hr />
+      <img src="imagenes/google.png" alt="Imagen de denuncia" />
+      <p>Descripción de la denuncia</p>
+      <div class="denuncia-noticias">
+        <div></div>
+        <div class="iconos-noticias">
+          <img src="imagenes/facebook.png" alt="comentarios">
+          <img src="imagenes/lupa.png" alt="justicia">
+        </div>
+      </div>
+    </div>
+    <div class="comentarios">
+      <h3>Comentarios</h3>
+      <div class="comentario">
+        <div class="avatar"></div>
+        <div class="contenido">
+          <strong>Usuario x</strong><br />
+          Texto del comentario.
+        </div>
+      </div>
+      <div class="comentario">
+        <div class="avatar"></div>
+        <div class="contenido">
+          <strong>Usuario</strong><br />
+          Comentario de ejemplo.
+        </div>
+      </div>
+      <div class="input-comentario">
+        <input type="text" placeholder="Escribe un comentario..." />
+        <button>Enviar</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
