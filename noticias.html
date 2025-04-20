@@ -154,6 +154,26 @@
   a {
   text-decoration: none;
   }
+  .boton-publicar-noticia {
+    position: fixed;
+    bottom: 30px;
+    right: 20px;
+    background-color: #0d5c9b;
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba (0,0,0,0.2);
+    z-index: 1000;
+    transition: all 0.3s;
+  }
+  .boton-publicar-noticia:hover {
+    background-color: #0d5c9b;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+  }
 
   </style>
 </head>
@@ -184,10 +204,10 @@
 
   <nav class="barra-navegacion">
     <a href="#" style="color: #000000;">Inicio</a>
-    <a href="#"style="color: #000000;">Destacado</a>
-    <a href="#"style="color: #000000;">Deportes</a>
-    <a href="#"style="color: #000000;">Educación</a>
-    <a href="#"style="color: #000000;">Turismo</a>
+    <a href="#" style="color: #000000;">Destacado</a>
+    <a href="#" style="color: #000000;">Deportes</a>
+    <a href="#" style="color: #000000;">Educación</a>
+    <a href="#" style="color: #000000;">Turismo</a>
     <form action="/transporte/search" method="post">
       <div class="Buscador">
         <img src="imagenes/lupa.png" alt="Buscar">
@@ -214,6 +234,8 @@
         </div>
       </div>
 
+      <a href="publicar_noticia.html" class="boton-publicar-noticia">Publicar una Noticia</a>
+
   <script>
     document.getElementById('btnSesion').addEventListener('click', function(e) {
       e.preventDefault();
@@ -232,6 +254,7 @@ if (usuario) {
   nombreUsuario.style.color = 'white';
   document.querySelector('.informacion').prepend(nombreUsuario);
 }
+
   </script> 
 </body>
 </html>
