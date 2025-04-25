@@ -59,54 +59,6 @@
       background-color: #0d5c9b;
       color: white;
     }
-    .publicidad {
-      display: flex;
-      padding: 20px;
-      display: flex;
-      padding: 20px;
-      margin-top: 130px;
-      height: calc(100vh - 130px);
-      overflow-y: auto;
-    }
-    .principales {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-      flex: 3;
-    }
-    .news-card {
-      background-color: white;
-      border: 1px solid #ccc;
-      padding: 70px;
-    }
-    .news-card img {
-      width: 100%;
-      background-color: #a5b4fc;
-      height: 150px;
-      object-fit: cover;
-    }
-    .news-card h3 {
-      margin-top: 10px;
-    }
-    .lomasvisto {
-      flex: 1;
-      margin-left: 20px;
-    }
-    .lomasvisto h3 {
-      margin-bottom: 10px;
-      border-bottom: 2px solid black;
-    }
-    .lomasvisto-item {
-      display: flex;
-      margin-bottom: 10px;
-      align-items: center;
-    }
-    .lomasvisto-item img {
-      width: 50px;
-      height: 50px;
-      background-color: #a5b4fc;
-      margin-right: 10px;
-    }
     .redes {
       margin-left: 500px;
     }
@@ -135,67 +87,20 @@
     height: 16px;
     pointer-events: none;
   }
-  .tarjeta {
-    background-color: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rbga(0,0,0,0.1);
-    box-shadow: transform 0.2s;
-  }
-  .tarjeta.hiver {
-    transform: scale(1.02);
-  }
-  .tarjeta img {
-    width: 100%;
-    height: 180%;
-    object-fit: cover;
-  }
-  .tarjeta .contenido {
-    padding: 15px;
-  }
-  .tarjeta .contenido h3{
-    margin-top: 0;
-    font-size: 18px;
-    color:#0d5c9b;
-  }
-  .tarjeta .contenido p {
-    font-size: 14px;
-    color: #333;
-  }
   a {
   text-decoration: none;
-  }
-  .boton-publicar-noticia {
-    position: fixed;
-    bottom: 30px;
-    right: 20px;
-    background-color: #0d5c9b;
-    color: white;
-    border: none;
-    padding: 15px 25px;
-    border-radius: 50px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba (0,0,0,0.2);
-    z-index: 1000;
-    transition: all 0.3s;
-  }
-  .boton-publicar-noticia:hover {
-    background-color: #0d5c9b;
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
   }
 
   </style>
 </head>
 <body>
-  <div id="menu-placeholder"></div> 
+  <div id="menu-placeholder"></div>
   <script>
     if (!localStorage.getItem('usuarioActual')) {
       alert('Debes iniciar sesion para acceder');
       window.location.href = "login.html";
     }
-    fetch('menu.html') //hace visible al menu
+    fetch('menu.html')
     .then(response => response.text())
     .then(html => {
       document.getElementById('menu-placeholder').innerHTML = html;
@@ -213,43 +118,23 @@
         document.querySelector('.informacion').prepend(bienvenida);
 
         linkSesion.textContent = 'Cerrar Sesión';
-        linkSesion.href = 'login.html';
+        linkSesion.href = '#';
         linkSesion.addEventListener('click', function(e) {
           e.preventDefault();
           localStorage.removeItem('usuarioActual');
           window.location.href = 'login.html';
         });
       }
-      const currentPage = location.pathname.split("/").pop(); // sombrea la categoria en la barra
+      const currentPage = location.pathname.split("/").pop();
       const links = document.querySelectorAll(".nav-link");
 
-      links.forEach(link => {//e identifica en que categoria esta
+      links.forEach(link => {
         const href = link.getAttribute("href");
         if (href === currentPage) {
           link.classList.add("active");
-    }
-  });
+        }
+      });
     });
   </script>
-
-  <div class="publicidad">
-    <div class="principales">
-      <div class="news-card">
-        <img alt="Noticia" />
-        <h3>Titulo de la Noticia</h3>
-        <p>Descripción de la noticia</p>
-      </div>
-
-      <div class="contenedor-noticias">
-        <div class="tarjeta">
-            <img src="imagenes/deportes.png" alt="Noticias de Deportes">
-            <div class="contenido">
-                <h3>El Salvador gana partido historico</h3>
-                <p>La selección salvadoreña logra una victoria sorprendente en las eliminatorias.</p>
-            </div>
-        </div>
-      </div>
-
-      <a href="publicar_noticia.html" class="boton-publicar-noticia">Publicar una Noticia</a>
 </body>
 </html>
