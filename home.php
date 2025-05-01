@@ -47,7 +47,7 @@ $nombreUsuario = htmlspecialchars($_SESSION['usuario_nombre']);
       height: 50px;
       margin-right: 10px;
     }
-    barra {
+    nav.barra1 {
       background-color: #bebaba;
       display: flex;
       justify-content: space-around;
@@ -58,6 +58,17 @@ $nombreUsuario = htmlspecialchars($_SESSION['usuario_nombre']);
       left: 0;
       right: 0;
       z-index: 999;
+    }
+    nav.barra1 a {
+      color: #000000;
+      text-decoration: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      transition: 0.3s;
+    }
+    nav.barra1 a.active {
+      background-color: #0d5c9b;
+      color: white;
     }
     .publicidad {
       display: flex;
@@ -142,36 +153,7 @@ $nombreUsuario = htmlspecialchars($_SESSION['usuario_nombre']);
   </style>
 </head>
 <body>
-  <header>
-    <div class="logo">
-      <img src="imagenes/logo.png" alt="logo">
-    </div>
-    <div class="redes">
-      <a target="_blank" href="https://www.instagram.com/"><img src="imagenes/instagram.png" height="35"/></a>
-      <a target="_blank" href="https://www.facebook.com/"><img src="imagenes/facebook.png" height="35" style="margin-left: 12px;"/></a>
-      <a target="_blank" href="https://x.com/?lang=es"><img src="imagenes/X.png" height="35" style="margin-left: 10px;"/></a>
-    </div>
-    <div class="informacion">
-      <a href="#" style="margin-left: 15px; color: #ffffff;">Contacto</a>
-      <a href="sobrenosotros.html" style="margin-left: 15px; color: #ffffff;">Sobre Nosotros</a>
-      <a href="login.html" style="margin-left: 15px; color: #ffffff;">Iniciar Sesión</a>
-    </div>
-  </header>
-
-  <barra>
-    <a href="#" style="color: #000000;">Inicio</a>
-    <a href="#"style="color: #000000;">Destacado</a>
-    <a href="#"style="color: #000000;">Deportes</a>
-    <a href="#"style="color: #000000;">Educación</a>
-    <a href="#"style="color: #000000;">Turismo</a>
-    <form action="/transporte/search" method="post">
-      <div class="Buscador">
-        <img src="imagenes/lupa.png" alt="Buscar">
-        <input type="text" name="keyword" placeholder="Buscar" required>
-      </div>
-    </form>
-  </barra>
-
+  <div id="menu-placeholder"></div>
   <div class="publicidad">
     <div class="principales">
       <div class="news-card">
@@ -232,5 +214,22 @@ $nombreUsuario = htmlspecialchars($_SESSION['usuario_nombre']);
       </div>
     </aside>
   </div>
+  <script>
+      fetch('menu.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('menu-placeholder').innerHTML = data;
+
+      const currentPage = location.pathname.split("/").pop();
+      const links = document.querySelectorAll(".nav-link");
+
+      links.forEach(link => {
+        const href = link.getAttribute("href");
+        if (href === currentPage) {
+          link.classList.add("active");
+        }
+      });
+      });
+  </script>
 </body>
 </html>
