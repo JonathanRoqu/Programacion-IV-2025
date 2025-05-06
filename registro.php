@@ -182,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <div class="informacion">
             <a href="#">Contacto</a>
-            <a href="sobrenosotros.html">Sobre Nosotros</a>
+            <a href="sobrenosotros.php">Sobre Nosotros</a>
             <a href="login.php">Iniciar Sesión</a>
         </div>
     </header>

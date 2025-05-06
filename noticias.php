@@ -1,5 +1,6 @@
 <?php
 session_start();
+include 'menu.php';
 include 'conexion.php';
 
 if (!isset($_SESSION['usuario_id'])) {
@@ -51,7 +52,7 @@ $conexion->close();
       font-family: Arial, sans-serif;
       background-color: #f5f5f5;
     }
-    header {
+    .encabezado {
       background-color: #0d5c9b;
       color: white;
       padding: 10px 20px;
@@ -64,19 +65,37 @@ $conexion->close();
       right: 0;
       z-index: 1000;
     }
+    
     .logo img {
       height: 50px;
     }
-    .barra-navegacion {
+    .informacion {
+      margin-right: 10px;
+      display: flex;
+      align-items: center;
+    }
+    nav.barra {
       background-color: #bebaba;
       display: flex;
       justify-content: space-around;
       padding: 10px;
+      font-weight: bold;
       position: fixed;
       top: 70px;
       left: 0;
       right: 0;
       z-index: 999;
+    }
+    nav.barra a {
+      color: #000000;
+      text-decoration: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      transition: 0.3s;
+    }
+    nav.barra a.active {
+      background-color: #0d5c9b;
+      color: white;
     }
     .contenido-principal {
       margin-top: 130px;
@@ -154,24 +173,11 @@ $conexion->close();
     }
     .Buscador button {
       padding: 8px 12px;
-      background-color: #0d5c9b;
+      background-color: #0d5c9b; 
       color: white;
       border: none;
       border-radius: 4px;
       cursor: pointer;
-    }
-    .barra-navegacion a {
-      color: #333;
-      text-decoration: none;
-      padding: 5px 10px;
-    }
-    .barra-navegacion a:hover {
-      color: #0d5c9b;
-    }
-    .informacion a {
-      color: white;
-      text-decoration: none;
-      margin-left: 15px;
     }
     .menu-configuracion {
       position: relative;
@@ -222,37 +228,12 @@ $conexion->close();
       background-color: #f0f0f0;
       border-radius: 4px;
     }
+    a {
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <img src="imagenes/logo.png" alt="Logo">
-        </div>
-        <nav class="informacion">
-          <div class="menu-configuracion">
-            <img src="imagenes/configurar.png" class="icono-configuracion" alt="Configuracion">
-            <div class="menu-desplegable">        
-              <a href="actualizar_perfil.php">Configurar Perfil</a>
-              <a href="logout.php" id="btnSesion">Cerrar Sesión</a>
-            </div>
-          </div>
-        </nav>
-    </header>
-
-    <nav class="barra-navegacion">
-      <a href="home.php">Inicio</a>
-      <a href="#">Destacado</a>
-      <a href="#">Deportes</a>
-      <a href="#">Educación</a>
-      <a href="#">Turismo</a>
-      <form class="Buscador" method="GET" action="noticias.php">
-        <img src="imagenes/lupa.png" alt="Buscar">
-        <input type="text" name="busqueda" placeholder="Buscar..." value="<?= htmlspecialchars($termino_busqueda) ?>">
-        <button type="submit">Buscar</button>
-      </form>
-    </nav>
-
     <div class="contenido-principal">
       <?php if (!empty($termino_busqueda)): ?>
         <div class="resultados-busqueda">

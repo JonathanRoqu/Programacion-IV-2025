@@ -14,7 +14,7 @@
       font-family: Arial, sans-serif;
       background-color: #fff;
     }
-    header {
+    .encabezado1 {
       background-color: #0d5c9b;
       color: white;
       padding: 10px 20px;
@@ -28,15 +28,15 @@
      right: 0;
      z-index: 1000;
     }
-    .logo {
+    .logo1 {
       display: flex;
       align-items: center;
     }
-    .logo img {
+    .logo1 img {
       height: 50px;
       margin-right: 10px;
     }
-    nav.barra{
+    nav.barra1{
       background-color: #bebaba;
       display: flex;
       justify-content: space-around;
@@ -48,21 +48,21 @@
       right: 0;
       z-index: 999;
     }
-    nav.barra a{
+    nav.barra1 a{
       color: #000000;
       text-decoration: none;
       padding: 8px 15px;
       border-radius: 5px;
       transition: 0.3s;
     }
-    nav.barra a.active {
+    nav.barra1 a.active {
       background-color: #0d5c9b;
       color: white;
     }
-    .redes {
+    .redes1 {
       margin-left: 500px;
     }
-    .informacion {
+    .informacion1 {
       margin-right: 15px;
     }
     .Buscador {
@@ -94,47 +94,6 @@
   </style>
 </head>
 <body>
-  <div id="menu-placeholder"></div>
-  <script>
-    if (!localStorage.getItem('usuarioActual')) {
-      alert('Debes iniciar sesion para acceder');
-      window.location.href = "login.html";
-    }
-    fetch('menu.html')
-    .then(response => response.text())
-    .then(html => {
-      document.getElementById('menu-placeholder').innerHTML = html;
-
-      const linkSesion = document.getElementById('linkSesion');
-      const usuario = JSON.parse(localStorage.getItem('usuarios'))?.find(
-        u => u.correo === localStorage.getItem('usuarioActual')
-      );
-
-      if (usuario) {
-        const bienvenida = document.createElement('span');
-        bienvenida.textContent = `Bienvenido, ${usuario.nombre}`;
-        bienvenida.style.marginLeft = '15px';
-        bienvenida.style.color = '#ffffff';
-        document.querySelector('.informacion').prepend(bienvenida);
-
-        linkSesion.textContent = 'Cerrar Sesión';
-        linkSesion.href = '#';
-        linkSesion.addEventListener('click', function(e) {
-          e.preventDefault();
-          localStorage.removeItem('usuarioActual');
-          window.location.href = 'login.html';
-        });
-      }
-      const currentPage = location.pathname.split("/").pop();
-      const links = document.querySelectorAll(".nav-link");
-
-      links.forEach(link => {
-        const href = link.getAttribute("href");
-        if (href === currentPage) {
-          link.classList.add("active");
-        }
-      });
-    });
-  </script>
+  <?php include 'menu.php'; ?>
 </body>
 </html>

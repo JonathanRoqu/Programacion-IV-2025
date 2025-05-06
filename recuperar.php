@@ -32,18 +32,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->isSMTP();
             $mail->Host       = 'smtp.gmail.com';
             $mail->SMTPAuth   = true;
-            $mail->Username   = ''; // correo que manda los correos
-            $mail->Password   = 'nezw jueo zqoh allv'; // 
+            $mail->Username   = 'do2291713@gmail.com'; // correo que permite mandar mensaje a los demas correos electronicos.
+            $mail->Password   = 'nezw jueo zqoh allv'; // contraseña generada por gmail
             $mail->SMTPSecure = 'tls';
             $mail->Port       = 587;
 
             // Remitente y destinatarios
-            $mail->setFrom('TUCORREO@gmail.com', 'Nombre de tu Sitio');
+            $mail->setFrom('TUCORREO@gmail.com', 'Comunicado Digital');
             $mail->addAddress($correo);
 
             // Contenido del correo
             $mail->isHTML(true);
-            $mail->Subject = 'Recuperación de contraseña';
+            $mail->Subject = 'Recuperacion de password';
             $mail->Body    = 'Hola, tu contraseña es: <b>' . $fila['contraseña'] . '</b>';
 
             $mail->send();

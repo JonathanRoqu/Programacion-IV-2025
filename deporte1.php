@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Comunicado Digital</title>
   <style>
-    * {
+	* {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
@@ -14,7 +14,7 @@
       font-family: Arial, sans-serif;
       background-color: #fff;
     }
-    header {
+    .encabezado1 {
       background-color: #0d5c9b;
       color: white;
       padding: 10px 20px;
@@ -28,11 +28,11 @@
      right: 0;
      z-index: 1000;
     }
-    .logo {
+    .logo1 {
       display: flex;
       align-items: center;
     }
-    .logo img {
+    .logo1 img {
       height: 50px;
       margin-right: 10px;
     }
@@ -59,10 +59,10 @@
       background-color: #0d5c9b;
       color: white;
     }
-    .redes {
+    .redes1 {
       margin-left: 500px;
     }
-    .informacion {
+    .informacion1 {
       margin-right: 15px;
     }
     .Buscador {
@@ -90,27 +90,15 @@
   a {
   text-decoration: none;
   }
-
   </style>
 </head>
 <body>
-  <div id="menu-placeholder"></div>
-  <script>
-    fetch('menu.html')
-    .then(response => response.text())
-    .then(html => {
-      document.getElementById('menu-placeholder').innerHTML = html;
+  <?php include 'menu.php'; ?>
 
-      const currentPage = location.pathname.split("/").pop(); 
-      const links = document.querySelectorAll(".nav-link");
-
-      links.forEach(link => {
-        const href = link.getAttribute("href");
-        if (href === currentPage) {
-          link.classList.add("active");
-        }
-      });
-    });
-    </script>
+  <!-- Aquí iría el contenido específico de esta página -->
+  <main style="margin-top: 150px; padding: 20px;">
+    <h1>Bienvenido a la sección Deportes</h1>
+    <!-- Contenido futuro -->
+  </main>
 </body>
 </html>

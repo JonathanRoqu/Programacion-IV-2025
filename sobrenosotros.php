@@ -8,10 +8,10 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background-color: #fff;
+      background-color: #fff; 
     }
 
-    header {
+    header { 
       background-color: #0d5c9b;
       color: white;
       padding: 15px 30px;
@@ -34,14 +34,16 @@
     }
     .informacion {
       margin-right: 45px;
+      font-family: 'Open Sans Regular';
     }
 
     main {
       padding: 40px;
     }
 
-    h2 {
+    h2, h4 {
       margin-bottom: 10px;
+      font-family: 'Open Sans Bold';
     }
 
     hr {
@@ -51,10 +53,11 @@
       margin-left: 5px;
     }
 
-    .descripcion {
+    .descripcion p {
       max-width: 600px;
       color: #555;
       margin-bottom: 60px;
+      font-family: 'Open Sans Regular';
     }
 
     .contactos {
@@ -63,6 +66,7 @@
 
     .contactos h3 {
       margin-bottom: 10px;
+      font-family: 'Open Sans Bold';
     }
 
     .contactos img {
@@ -89,8 +93,8 @@
      </div>  
       <div class="informacion">
         <a href="#" style="margin-left: 15px; color: #ffffff;">Contacto</a>
-        <a href="sobrenosotros.html" style="margin-left: 15px; color: #ffffff;">Sobre Nosotros</a>
-        <a href="login.html" style="margin-left: 15px; color: #ffffff;">Iniciar Sesión</a>
+        <a href="sobrenosotros.php" style="margin-left: 15px; color: #ffffff;">Sobre Nosotros</a>
+        <a href="login.php" style="margin-left: 15px; color: #ffffff;">Iniciar Sesión</a>
       </div>
   </header>
 
