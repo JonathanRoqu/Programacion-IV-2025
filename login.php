@@ -8,7 +8,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $correo = $_POST['correo'] ?? '';
   $contraseña = $_POST['contraseña'] ?? '';
 
-  $stmt = $conexion->prepare("SELECT id, contraseña, nombre FROM usuarios WHERE correo = ? AND contraseña = ?");
+  // Consulta actualizada: incluye si la verificación del correo ya fue actualizada. 
+  $stmt = $conexion->prepare("SELECT id, contraseña, nombre FROM usuarios WHERE correo = ? AND contraseña = ? AND email_verificacion = 1");
   $stmt->bind_param("ss", $correo, $contraseña);
   $stmt->execute();
   $resultado = $stmt->get_result();
@@ -23,7 +24,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit();
 
   } else {
-    $error = "Correo o contraseña incorrectos";
+    // Verificamos si el correo y contraseña son correctos pero el correo no está verificado
+    $stmt = $conexion->prepare("SELECT email_verificacion FROM usuarios WHERE correo = ? AND contraseña = ?");
+    $stmt->bind_param("ss", $correo, $contraseña);
+    $stmt->execute();
+    $verifica = $stmt->get_result();
+
+    if ($verifica->num_rows === 1) {
+      $estado = $verifica->fetch_assoc();
+      if ($estado['email_verificacion'] == 0) {
+        $error = "Debes verificar tu correo electrónico antes de iniciar sesión.";
+      } else {
+        $error = "Correo o contraseña incorrectos.";
+      }
+    } else {
+      $error = "Correo o contraseña incorrectos.";
+    }
   }
 }
 ?>
@@ -31,6 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Inicio de Sesión</title>
@@ -152,7 +170,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <a href="login.php">Iniciar Sesión</a>
     </div>
   </header>
-
   <main>
     <h2>Inicio de Sesión</h2>
     <p>Ingresa tus credenciales para acceder</p>
@@ -181,13 +198,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
     </div>
   </main>
-
+  <?php if (isset($_SESSION['mensaje'])): ?>
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055;">
+    <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                <?= htmlspecialchars($_SESSION['mensaje']) ?>
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+        </div>
+    </div>
+  </div>
+<?php unset($_SESSION['mensaje']); ?>
+<?php endif; ?>
   <script>
     document.querySelector('form').addEventListener('submit', function(e) {
       if (!this.checkValidity()) {
         e.preventDefault();
         alert('Completa todos los campos');
       }
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        const toastEl = document.querySelector('.toast');
+        if (toastEl) {
+            const bsToast = new bootstrap.Toast(toastEl, {
+                autohide: true,
+                delay: 7000
+            });
+            bsToast.show();
+        }
     });
   </script>
 </body>

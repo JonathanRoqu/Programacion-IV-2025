@@ -32,8 +32,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->isSMTP();
             $mail->Host       = 'smtp.gmail.com';
             $mail->SMTPAuth   = true;
-            $mail->Username   = 'do2291713@gmail.com'; // correo que permite mandar mensaje a los demas correos electronicos.
-            $mail->Password   = 'nezw jueo zqoh allv'; // contraseña generada por gmail
+            $mail->Username   = ''; // correo que permitira mandar mensajes a distintos correos electronicos.
+            $mail->Password   = ''; // contraseña generada por gmail del correo.
             $mail->SMTPSecure = 'tls';
             $mail->Port       = 587;
 
@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Contenido del correo
             $mail->isHTML(true);
-            $mail->Subject = 'Recuperacion de password';
+            $mail->Subject = 'Recuperacion de contraseña';
             $mail->Body    = 'Hola, tu contraseña es: <b>' . $fila['contraseña'] . '</b>';
 
             $mail->send();

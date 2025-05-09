@@ -1,4 +1,10 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'PHPMailer/PHPMailer.php';
+require 'PHPMailer/SMTP.php';
+require 'PHPMailer/Exception.php';
 session_start();
 include 'conexion.php';
 
@@ -21,18 +27,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($stmt->get_result()->num_rows > 0) {
             $error = "Este correo ya está registrado";
         } else {
-            $stmt = $conexion->prepare("INSERT INTO usuarios (nombre, correo, contraseña) VALUES (?, ?, ?)");
-            $stmt->bind_param("sss", $nombre, $correo, $contraseña);
+            $token = bin2hex(random_bytes(16)); // genera el Token aleatorio.
+            $email_verificado = 0;
+        
+            $stmt = $conexion->prepare("INSERT INTO usuarios (nombre, correo, contraseña, token_verificacion, email_verificacion) VALUES (?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssssi", $nombre, $correo, $contraseña, $token, $email_verificado);
 
+        
             if ($stmt->execute()) {
-                $_SESSION['usuario'] = $correo;
-                $_SESSION['usuario_nombre'] = $nombre;
-                header("Location: noticias.php");
-                exit();
+                // Envía al correo solo si el insert fue exitoso
+                $mail = new PHPMailer(true);
+                try {
+                    $mail->isSMTP();
+                    $mail->Host       = 'smtp.gmail.com';
+                    $mail->SMTPAuth   = true;
+                    $mail->Username   = ''; // tu correo
+                    $mail->Password   = ''; // tu contraseña de aplicación de Gmail
+                    $mail->SMTPSecure = 'tls';
+                    $mail->Port       = 587;
+        
+                    $mail->setFrom('TUCORREO@gmail.com', 'Comunicado Digital');
+                    $mail->addAddress($correo);
+        
+                    $verificar_url = "http:///Engine-Team/verificar.php?token=" . $token;//link que permite validar el registro
+        
+                    $mail->isHTML(true);
+                    $mail->Subject = 'Verifica tu cuenta';
+                    $mail->Body    = "Hola <b>$nombre</b>,<br><br>Gracias por registrarte. Por favor haz clic en el siguiente enlace para verificar tu cuenta:<br><br>
+                                     <a href='$verificar_url'>$verificar_url</a><br><br>Si no te registraste, ignora este mensaje.";
+        
+                    $mail->send();
+        
+                    $_SESSION['mensaje'] = "Registro exitoso. Verifica tu correo para activar tu cuenta.";
+                    header("Location: login.php");
+                    exit();
+                } catch (Exception $e) {
+                    $error = "Error al enviar el correo de verificación: {$mail->ErrorInfo}";
+                }
             } else {
                 $error = "Error al registrar: " . $conexion->error;
             }
         }
+        
     }
 }
 ?>
