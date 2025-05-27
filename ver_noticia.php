@@ -2,28 +2,65 @@
 session_start();
 include 'conexion.php';
 
-if (!isset($_SESSION['usuario_id'])) {
-    header("Location: login.php");
-    exit();
-}
-
 if (!isset($_GET['id'])) {
     header("Location: noticias.php");
     exit();
 }
 
 $id_noticia = intval($_GET['id']);
+$usuario_id = $_SESSION['usuario_id'] ?? null;
+$es_admin = ($_SESSION['usuario_rol'] ?? '') === 'Administrador';
+
 $stmt = $conexion->prepare("SELECT * FROM noticias WHERE id = ?");
 $stmt->bind_param("i", $id_noticia);
 $stmt->execute();
-$resultado = $stmt->get_result();
-$noticia = $resultado->fetch_assoc();
+$noticia = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
 if (!$noticia) {
     header("Location: noticias.php");
     exit();
 }
+
+if (isset($_POST['eliminar_id'])) {
+    $id_comentario = intval($_POST['eliminar_id']);
+    $stmt = $conexion->prepare("DELETE FROM comentarios WHERE id = ? AND (usuario_id = ? OR ? = 1)");
+    $es_admin_flag = $es_admin ? 1 : 0;
+    $stmt->bind_param("iii", $id_comentario, $usuario_id, $es_admin_flag);
+    $stmt->execute();
+    $stmt->close();
+    echo json_encode(["success" => true]);
+    exit();
+}
+
+if (isset($_POST["editar_id"], $_POST['editar_texto'])) {
+    $id_comentario = intval($_POST['editar_id']);
+    $texto = trim($_POST['editar_texto']);
+    $stmt = $conexion->prepare("UPDATE comentarios SET texto = ?, editado = 1 WHERE id = ? AND usuario_id = ?");
+    $stmt->bind_param("sii", $texto, $id_comentario, $usuario_id);
+    $stmt->execute();
+    $stmt->close();
+    echo json_encode(["success"=> true]);
+    exit();
+}
+
+if (isset($_POST['nuevo_comentario'])) {
+    $texto = trim($_POST['nuevo_comentario']);
+    if (!empty($texto)) {
+        $stmt = $conexion->prepare("INSERT INTO comentarios (noticia_id, usuario_id, texto, fecha) VALUES (?, ?, ?, NOW())");
+        $stmt->bind_param("iss", $id_noticia, $usuario_id, $texto);
+        $stmt->execute();
+        $stmt->close();
+    }
+    echo json_encode(["success" => true]);
+    exit();
+}
+
+$stmt = $conexion->prepare("SELECT c.*, u.nombre FROM comentarios c JOIN usuarios u ON c.usuario_id = u.id WHERE c.noticia_id = ? ORDER BY c.fecha DESC");
+$stmt->bind_param("i", $id_noticia);
+$stmt->execute();
+$comentarios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
 ?>
 
 <!DOCTYPE html>
@@ -33,15 +70,10 @@ if (!$noticia) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($noticia['titulo']) ?> - Comunicado Digital</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
         body {
             font-family: Arial, sans-serif;
             background-color: #f5f5f5;
-            line-height: 1.6;
+            padding-top: 130px;
         }
         header {
             background-color: #0d5c9b;
@@ -59,147 +91,102 @@ if (!$noticia) {
         .logo img {
             height: 50px;
         }
-        .barra-navegacion {
-            background-color: #bebaba;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px;
-            position: fixed;
-            top: 70px;
-            left: 0;
-            right: 0;
-            z-index: 999;
-        }
-        .contenido-principal {
-            margin-top: 130px;
-            padding: 20px;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .noticia-titulo {
-            color: #0d5c9b;
-            margin-bottom: 20px;
-            font-size: 28px;
-        }
-        .noticia-meta {
-            color: #666;
-            font-size: 16px;
-            margin-bottom: 20px;
-            display: flex;
-            gap: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
-        }
-        .imagen-contenedor {
-            max-width: 100%;
-            overflow: hidden;
-            text-align: center;
-            margin-bottom: 25px;
-        }
-        .noticia-imagen {
-            max-width: 100%;
-            height: auto;
-            max-height: 500px;
-            object-fit: contain;
-            border-radius: 4px;
-        }
-        .noticia-contenido {
-            font-size: 16px;
-            line-height: 1.8;
-            margin-bottom: 30px;
-        }
-        .noticia-contenido p {
-            margin-bottom: 15px;
-        }
-        .acciones-noticia {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-        }
-        .botones-accion {
-            display: flex;
-            gap: 15px;
-        }
-        .boton-accion {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            padding: 8px 15px;
-            background-color: #f0f0f0;
-            border-radius: 4px;
-            text-decoration: none;
-            color: #333;
-            transition: all 0.3s ease;
-            border: 1px solid #ddd;
-        }
-        .boton-accion:hover {
-            background-color: #e0e0e0;
-            transform: translateY(-2px);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .boton-accion img {
-            width: 20px;
-            height: 20px;
-        }
-        .boton-volver {
-            padding: 8px 20px;
-            background-color: #0d5c9b;
-            color: white;
-            border-radius: 4px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        .boton-volver:hover {
-            background-color: #0a4a7a;
-        }
         .informacion a {
             color: white;
             text-decoration: none;
             margin-left: 15px;
         }
-        .Buscador {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .contenido-principal {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
         }
-        .Buscador img {
-            width: 20px;
-            height: 20px;
-        }
-        .Buscador input {
-            padding: 8px 12px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+        .noticia-meta {
+            color: #666;
             font-size: 14px;
+            margin-bottom: 10px;
         }
-        .barra-navegacion a {
-            color: #333;
-            text-decoration: none;
-            padding: 5px 10px;
+        .noticia-imagen {
+            max-width: 100%;
+            margin: 20px 0;
+            border-radius: 6px;
         }
-        .barra-navegacion a:hover {
+        .formulario-comentario {
+            margin-top: 30px;
+        }
+        .formulario-comentario textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .formulario-comentario button {
+            margin-top: 10px;
+            background-color: #0d5c9b;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .comentario {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 6px;
+            border: 1px solid #eee;
+        }
+        .comentario strong {
             color: #0d5c9b;
         }
-        @media (max-width: 600px) {
-            .acciones-noticia {
-                flex-direction: column;
-                gap: 15px;
-            }
-            .botones-accion {
-                width: 100%;
-                justify-content: space-between;
-            }
-            .boton-accion {
-                flex-grow: 1;
-                justify-content: center;
-            }
+        .mensaje {
+            color: green;
+            margin-bottom: 10px;
+        }
+        .comentario-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .comentario-cuerpo {
+            flex: 1;
+        }
+        .comentario-cuerpo strong {
+            color: #0d5c9b;
+        }
+        .comentario-cuerpo small {
+            display: block;
+            color: #777;
+        }
+        .acciones {
+            margin-top: 5px;
+        }
+        .acciones button {
+            font-size: 12px;
+            background: none;
+            border: none;
+            color: #0d5c9b;
+            cursor: pointer;
+        }
+        .formulario-comentario textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+        .formulario-comentario button {
+            background-color: #0d5c9b;
+            color: white;
+            padding: 8px 14px;
+            border: none;
+            border-radius: 4px;
+            margin-top: 10px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -209,70 +196,96 @@ if (!$noticia) {
             <img src="imagenes/logo.png" alt="Logo">
         </div>
         <nav class="informacion">
+            <a href="javascript:history.back()" class="back-buttom">Volver</a>
             <a href="logout.php" id="btnSesion">Cerrar Sesión</a>
-            </nav>
+        </nav>
     </header>
 
-    <nav class="barra-navegacion">
-        <a href="home.php">Inicio</a>
-        <a href="#">Destacado</a>
-        <a href="#">Deportes</a>
-        <a href="#">Educación</a>
-        <a href="#">Turismo</a>
-        <div class="Buscador">
-            <img src="imagenes/lupa.png" alt="Buscar">
-            <input type="text" placeholder="Buscar">
-        </div>
-    </nav>
-
     <div class="contenido-principal">
-        <h1 class="noticia-titulo"><?= htmlspecialchars($noticia['titulo']) ?></h1>
-        
-        <div class="noticia-meta">
-            <span><strong>Categoría:</strong> <?= htmlspecialchars($noticia['categoria']) ?></span>
-            <span><strong>Autor:</strong> <?= htmlspecialchars($noticia['autor']) ?></span>
-            <span><strong>Fecha:</strong> <?= htmlspecialchars($noticia['fecha']) ?></span>
-        </div>
-
+        <h1><?= htmlspecialchars($noticia['titulo']) ?></h1>
+        <p><strong><?= htmlspecialchars($noticia['categoria']) ?></strong> - <?= htmlspecialchars($noticia['autor']) ?> | <?= $noticia['fecha'] ?></p>
         <?php if ($noticia['imagen']): ?>
-            <div class="imagen-contenedor">
-                <img src="<?= htmlspecialchars($noticia['imagen']) ?>" class="noticia-imagen" alt="<?= htmlspecialchars($noticia['titulo']) ?>">
+            <img src="<?= htmlspecialchars($noticia['imagen']) ?>" class="noticia-imagen" alt="Imagen">
+        <?php endif; ?>
+        <p><?= nl2br(htmlspecialchars($noticia['descripcion'])) ?></p>
+
+        <h3>Comentarios</h3>
+        <?php if ($noticia['bloquear_comentarios']): ?>
+            <p style="color: #777; font-style: italic;">Los comentarios estan bloqueados para esta noticia.</p>
+        <?php else: ?>
+            <?php if (isset($_SESSION['usuario_id'])): ?>
+                <form class="formulario-comentario" onsubmit="enviarComentario(event)">
+                    <textarea name="nuevo_comentario" id="nuevo_comentario" required placeholder="Escribe un comentario..."></textarea>
+                    <button type="submit">Comentar</button>
+                </form>
+            <?php else: ?>
+                <p><em>Inicia sesión para dejar un comentario.</em></p>
+            <?php endif; ?>
+
+            <div id="comentarios">
+                <?php if (empty($comentarios)): ?>
+                    <p style="margin-top: 10px; color: #555;"> No hay comentarios aun.</p>
+                <?php else: ?>
+                    <?php foreach ($comentarios as $comentario): ?>
+                        <div class="comentarios" id="comentario-<?= $comentario['id'] ?>">
+                            <img class="comentario-avatar" src="<?= htmlspecialchars($comentario['avatar'] ?? 'imagenes/avatars/avatar-default.png') ?>" alt="avatar">
+                            <div class="comentario-cuerpo">
+                                <strong><?= htmlspecialchars($comentario['nombre']) ?></strong>
+                                <small><?= date('d/m/Y H:i', strtotime($comentario['fecha'])) ?><?= $comentario['editado'] ? ' (editado)' : '' ?></small>
+                                <div id="texto-<?= $comentario['id'] ?>"><?= nl2br(htmlspecialchars($comentario['texto'])) ?></div>
+
+                                <?php if ($comentario['usuario_id'] == $usuario_id || $es_admin): ?>
+                                    <div class="acciones">
+                                        <button onclick="editarComentario(<?= $comentario['id'] ?>, '<?= htmlspecialchars($comentario['texto'], ENT_QUOTES) ?>')">Editar</button>
+                                        <button onclick="eliminarComentario(<?= $comentario['id'] ?>)">Eliminar</button>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         <?php endif; ?>
-        
-        <div class="noticia-contenido">
-            <?= nl2br(htmlspecialchars($noticia['descripcion'])) ?>
-        </div>
+    </div>
+       
+    <script>
+        function enviarComentario(e) {
+            e.preventDefault();
+            const texto = document.getElementById('nuevo_comentario').value;
+            fetch(location.href, {
+                method: "POST",
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded'},
+                body: new URLSearchParams({ nuevo_comentario: texto }) 
+            }).then(() => location.reload());
+        }
 
-            <div class="acciones-noticia">
-                <a href="noticia.php" class="boton-volver">Volver a Noticias</a>
+        function eliminarComentario(id) {
+            if (confirm('Eliminar este comentario?')) {
+                fetch(location.href, {
+                    method:'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ eliminar_id: id })
+                }).then(() => location.reload());
+            }
+        }
 
-                <div class="botones-accion">
-                    <a href="reportar.php?id=<?= $noticia['id'] ?>" class="boton-accion">
-                        <img src="imagenes/reportar.png" alt="Reportar Noticia">
-                        <span>Reportar</span>
-                    </a>
+        function editarComentario(id, texto) {
+            const contenedor = document.getElementById('texto-' + id);
+            contenedor.innerHTML = `
+                <textarea id="editar-${id}" style="width:100%;">${texto}</textarea>
+                <button onclick="guardarEdicion(${id})">Guardar</button>
+            `;
 
-                    <?php if ($noticia['bloquear_comentarios'] == 1): ?>
-                        <span class="boton-accion" style="opacity: 0.6; cursor: not-allowed;">
-                            <img src="imagenes/comentar.png" alt="Comentar">
-                            <span>Comentarios bloqueados</span>
-                        </span>
-                    <?php else: ?>
-                        <a href="comentar.php?id=<?= $noticia['id'] ?>" class="boton-accion">
-                            <img src="imagenes/comentar.png" alt="Comentar">
-                            <span>Comentar</span>
-                        </a>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
+        }
 
-        <script>
-            document.getElementById('btnSesion').addEventListener('click', function(e) {
-                e.preventDefault();
-                window.location.href = "login.php";
-            }) ;
-    </script>
+        function guardarEdicion(id) {
+            const nuevoTexto = document.getElementById('editar-' + id).value;
+            fetch(location.href, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ editar_id: id, editar_texto: nuevoTexto })
+            }).then(() => location.reload());
+        }
+        </script>
 </body>
 </html>

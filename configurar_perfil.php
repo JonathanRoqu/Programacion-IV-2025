@@ -241,7 +241,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['avatar'])) {
       color: #a94442;
       border: 1px solid #ebccd1;
     }
-        
+    #toggleActual, #toggleNueva {
+      position: absolute;
+      top: 40%;
+      right: -5px;
+      transform: translateY(-60%);
+      cursor: pointer;
+      width: 24px;
+    }
     </style>
 </head>
 <body>
@@ -272,10 +279,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['avatar'])) {
                 <input type="text" id="username" name="username" value="<?= htmlspecialchars($usuario['nombre']) ?>" required>
 
                 <label for="password_actual">Contraseña Actual (para cambios)</label>
-                <input type="password" id="password_actual" name="password_actual">
+                <div style="position: relative;">
+                  <input type="password" id="password_actual" name="password_actual">
+                  <img src="imagenes/ojoAbierto.webp" id="toggleActual" onclick="togglePasswordVisibility('password_actual', this)">
+                </div>
 
                 <label for="nueva_password">Nueva Contraseña</label>
-                <input type="password" id="nueva_password" name="nueva_password" placeholder="Dejar en blanco para no cambiar">
+                <div style="position: relative;">
+                  <input type="password" id="nueva_password" name="nueva_password" placeholder="Dejar en blanco para no cambiar">
+                  <img src="imagenes/ojoAbierto.webp" id="toggleNueva" onclick="togglePasswordVisibility('nueva_password', this)">
+                </div>
 
                 <button type="submit" class="btn-submit">Guardar Cambios</button>
             </div>
@@ -300,6 +313,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['avatar'])) {
                 reader.readAsDataURL(file);
             }
         });
+        // Codigo para mostrar la contraseña.
+        function togglePasswordVisibility(inputId, icon) {
+          const input = document.getElementById(inputId);
+          if (input.type === "password") {
+            input.type = "text";
+            icon.src = "imagenes/ojoCerrado.webp";
+          } else {
+            input.type = "password";
+            icon.src = "imagenes/ojoAbierto.webp";
+          }
+        }
     </script>
 </body>
 </html>

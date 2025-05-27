@@ -7,52 +7,58 @@ require 'PHPMailer/PHPMailer.php';
 require 'PHPMailer/SMTP.php';
 require 'PHPMailer/Exception.php';
 
-// Conexión a la base de datos
 $conexion = new mysqli("localhost", "root", "", "comunicado_digital");
 if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
 
-$mensaje = "";
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $correo = $_POST['correo'];
+    $correo = $conexion->real_escape_string($_POST['correo']);
 
-    $consulta = "SELECT * FROM usuarios WHERE correo='$correo'";
+    $consulta = "SELECT id FROM usuarios WHERE correo='$correo'";
     $resultado = $conexion->query($consulta);
 
     if ($resultado->num_rows > 0) {
         $fila = $resultado->fetch_assoc();
+        $id_usuario = $fila['id'];
+        $token = bin2hex(random_bytes(32)); // Token seguro
+        $expiracion = date("Y-m-d H:i:s", strtotime("+1 hour"));
 
-        // Crear instancia de PHPMailer
+        // Guardar token en tabla tokens_recuperacion
+        $conexion->query("INSERT INTO tokens_recuperacion (id_usuario, token, expiracion) 
+                          VALUES ('$id_usuario', '$token', '$expiracion')");
+
+        // Enviar el link de recuperación
         $mail = new PHPMailer(true);
+        $mail->CharSet = 'UTF-8';
 
         try {
-            // Configuración del servidor SMTP
             $mail->isSMTP();
             $mail->Host       = 'smtp.gmail.com';
             $mail->SMTPAuth   = true;
-            $mail->Username   = ''; // correo que permitira mandar mensajes a distintos correos electronicos.
-            $mail->Password   = ''; // contraseña generada por gmail del correo.
+            $mail->Username   = 'd4660140@gmail.com'; // Tu correo
+            $mail->Password   = 'emar lypn ivdw bcwn';   // Contraseña de aplicación de Gmail
             $mail->SMTPSecure = 'tls';
             $mail->Port       = 587;
 
-            // Remitente y destinatarios
             $mail->setFrom('TUCORREO@gmail.com', 'Comunicado Digital');
             $mail->addAddress($correo);
 
-            // Contenido del correo
+            $link = "http://192.168.1.10:8080/Engine-Team/restablecer.php?token=$token"; // Ajusta tu URL
+
             $mail->isHTML(true);
-            $mail->Subject = 'Recuperacion de contraseña';
-            $mail->Body    = 'Hola, tu contraseña es: <b>' . $fila['contraseña'] . '</b>';
+            $mail->Subject = 'Recuperación de contraseña';
+            $mail->Body    = "Hola, haz clic en el siguiente enlace para restablecer tu contraseña:<br><br>
+                             <a href='$link'>$link</a><br><br>
+                             Este enlace expirará en 1 hora.";
 
             $mail->send();
-            $mensaje = "Te hemos enviado un correo con tu contraseña.";
-        } catch (Exception $e) {
-            $mensaje = "Error al enviar el correo: {$mail->ErrorInfo}";
+            $recuperar = "Te hemos enviado un correo con instrucciones para restablecer tu contraseña.";
+        } catch (Exception $e) { 
+            $recuperar = "Error al enviar el correo: {$mail->ErrorInfo}";
         }
     } else {
-        $mensaje = "Correo no encontrado. Verifica e intenta de nuevo.";
+        $correonoencontrado = "Correo no encontrado. Verifica e intenta de nuevo.";
     }
 }
 ?>
@@ -60,7 +66,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<style>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -102,7 +110,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       padding: 40px;
       border-radius: 10px;
       text-align: center;
-      max-width: 400px;
+      max-width: 500px;
       width: 100%;
     }
 
@@ -161,13 +169,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       text-decoration: none;
       font-family: 'Open Sans Regular';
     }
-
-    #mensaje {
-      margin-top: 15px;
-      font-size: 14px;
-      color: red;
-    }
-</style>
+  </style>
 </head>
 <body>
 <header>
@@ -191,8 +193,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <button type="submit">Enviar</button>
             <a class="enlace-login" href="login.php">¿Recordaste tu contraseña? Inicia Sesión</a>
         </form>
-        <p id="mensaje"><?php echo $mensaje; ?></p>
     </div>
 </div>
+    <?php if (isset($recuperar)): ?>
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055;">
+    <div class="toast align-items-center text-bg-primary border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                <?= htmlspecialchars($recuperar) ?>
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+        </div>
+    </div>
+  </div>
+  <?php unset($recuperar); ?>
+  <?php endif; ?>
+
+  <?php if (isset($correonoencontrado)): ?>
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055;">
+    <div class="toast align-items-center text-bg-danger border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                <?= htmlspecialchars($correonoencontrado) ?>
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+        </div>
+    </div>
+  </div>
+  <?php unset($correonoencontrado); ?>
+  <?php endif; ?>
+
+   <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toastEl = document.querySelector('.toast');
+        if (toastEl) {
+            const bsToast = new bootstrap.Toast(toastEl, {
+                autohide: true,
+                delay: 7000
+            });
+            bsToast.show();
+        }
+    });
+  </script>
 </body>
 </html>

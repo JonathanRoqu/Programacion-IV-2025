@@ -10,6 +10,11 @@ if (!isset($_SESSION['usuario_id'])) {
     exit();
 }
 
+if ($_SESSION['usuario_rol'] !== 'Administrador') {
+    header("Location: noticias.php");
+    exit();
+}
+
 $error = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -30,22 +35,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if (empty($_POST['titulo']) || empty($_POST['categoria']) || empty($_POST['descripcion']) || empty($_POST['autor']) || empty($_POST['fecha'])) {
-        $error = "Todos los campos marcados como obligatorios deben completarse";
+    $titulo = trim($_POST['titulo'] ?? '');
+    $categoria = trim($_POST['categoria'] ??'');
+    $descripcion = trim($_POST['descripcion'] ??'');
+    $autor = trim($_POST['autor'] ??'');
+    $fecha = trim($_POST['fecha'] ??'');
+
+    if ($titulo === '' || $categoria === '' || $descripcion === '' || $autor === '' || $fecha === '') {
+        $error = "Todos los campos marcados como obligatorios deben completarse correctamente.";
     } else {
         $stmt = $conexion->prepare("INSERT INTO noticias (titulo, categoria, descripcion, autor, fecha, imagen, bloquear_comentarios) VALUES (?, ?, ?, ?, ?, ?, ?)");
 
         if ($stmt) {
             $bloquear_comentarios = isset($_POST['bloquear_comentarios']) ? 1 : 0;
-            $stmt->bind_param("ssssssi",
-                $_POST['titulo'],
-                $_POST['categoria'],
-                $_POST['descripcion'],
-                $_POST['autor'],
-                $_POST['fecha'],
-                $ruta_imagen,
-                $bloquear_comentarios
-            );
+            $stmt->bind_param("ssssssi", $titulo, $categoria, $descripcion, $autor, $fecha, $ruta_imagen, $bloquear_comentarios);
 
             if ($stmt->execute()) {
                 header("Location: noticias.php?exito=1");
@@ -267,19 +270,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
     </div>
 
-        <script>
-            document.getElementById('imagen').addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        const preview = document.getElementById('preview-imagen');
-                        preview.src = event.target.result;
-                        preview.style.display = 'block';
-                    }
-                    reader.readAsDataURL(file);
+    <script>
+        document.getElementById('imagen').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const preview = document.getElementById('preview-imagen');
+                    preview.src = event.target.result;
+                    preview.style.display = 'block';
                 }
-            });
+                reader.readAsDataURL(file);
+            }
+        });
     </script>  
 </body>
 </html>

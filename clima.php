@@ -144,8 +144,29 @@
     a {
       text-decoration: none;
     }
+    .boton-publicar { 
+      position: fixed; 
+      bottom: 30px; right: 
+      30px; background-color: #0d5c9b; 
+      color: white; 
+      border: none; 
+      padding: 15px 25px; 
+      border-radius: 50px; 
+      font-weight: bold; 
+      cursor: pointer; 
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
+      z-index: 1000; 
+      text-decoration: none; 
+    }
   </style>
 </head>
 <body>
+  <?php if ($_SESSION['usuario_rol'] === 'Administrador'): ?>
+    <a href="publicar_noticia.php" class="boton-publicar">Publicar Noticia</a>
+  <?php endif; ?>
+
+  <?php if ($_SESSION['usuario_rol'] === 'Poblador'): ?>
+    <a href="enviar_noticia.php" class="boton-publicar">Enviar una noticia</a>
+  <?php endif; ?>
 </body>
 </html>

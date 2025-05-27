@@ -148,71 +148,6 @@ if (!isset($_SESSION['usuario_id'])) {
     .denuncia {
       width: 45%;
     }
-    .denuncia img {
-      width: 100%;
-      background-color: #a0bfff;
-      height: 200px;
-      display: block;
-      margin-bottom: 30px;
-    }
-    .denuncia-noticias {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 30px;
-      border-top: 2px solid black;
-      padding-top: 10px;
-    }
-    .iconos-noticias {
-      display: flex;
-      gap: 15px;
-    }
-    .iconos-noticias img {
-      width: 24px;
-      height: 24px;
-      cursor: pointer;
-    }
-    .comentario {
-      display: flex;
-      align-items: flex-start;
-      margin-bottom: 20px;
-    }
-    .comentarios h3 {
-      margin-top: 0;
-    }
-    .comentarios {
-      width: 35%;
-      border: 2px solid #000;
-      border-radius: 12px;
-      padding: 20px;
-      margin-left: 70px;
-    }
-    .comentario .avatar {
-      width: 40px;
-      height: 40px;
-      background-color: #a0bfff;
-      border-radius: 60%;
-      margin-right: 10px;
-    }
-    .comentario .contenido {
-      background-color: #ddd;
-      padding: 10px;
-      border-radius: 8px;
-      width: 100%;
-    }
-    .input-comentario {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-    .input-comentario button {
-      background-color: #0d5c9b;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 15px;
-      cursor: pointer;
-    }
     a {
       text-decoration: none;
     }
@@ -222,39 +157,7 @@ if (!isset($_SESSION['usuario_id'])) {
   <div class="contenedor">
     <div class="denuncia">
       <h2>Denuncias Ciudadanas</h2>
-      <hr />
-      <img src="imagenes/google.png" alt="Imagen de denuncia" />
-      <p>Descripción de la denuncia</p>
-      <div class="denuncia-noticias">
-        <div></div>
-        <div class="iconos-noticias">
-          <img src="imagenes/facebook.png" alt="comentarios">
-          <img src="imagenes/lupa.png" alt="justicia">
-        </div>
-      </div>
-    </div>
-    <div class="comentarios">
-      <h3>Comentarios</h3>
-      <div class="comentario">
-        <div class="avatar"></div>
-        <div class="contenido">
-          <strong>Usuario x</strong><br />
-          Texto del comentario.
-        </div>
-      </div>
-      <div class="comentario">
-        <div class="avatar"></div>
-        <div class="contenido">
-          <strong>Usuario</strong><br />
-          Comentario de ejemplo.
-        </div>
-      </div>
-      <div class="input-comentario">
-        <input type="text" placeholder="Escribe un comentario..." />
-        <button>Enviar</button>
-      </div>
     </div>
   </div>
-
 </body>
 </html>

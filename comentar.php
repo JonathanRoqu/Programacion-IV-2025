@@ -3,6 +3,7 @@ session_start();
 include 'conexion.php';
 
 if (!isset($_SESSION['usuario_id'])) {
+    $_SESSION['comentario'] = "Para poder comentar una noticia, debes iniciar sesión primero.";
     header("Location: login.php");
     exit();
 }
@@ -332,6 +333,30 @@ $stmt_comentarios->close();
             border-radius: 4px;
             cursor: pointer;
         }
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #0d5c9b;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            padding: 12px 20px;
+            position: fixed;
+            z-index: 9999;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out, visibility 0s linear 0.5s;
+        }
+
+        .toast.visible {
+            visibility: visible;
+            opacity: 1;
+            transition-delay: 0s;
+        }
+
     </style>
 </head>
 <body>
@@ -345,15 +370,24 @@ $stmt_comentarios->close();
         </nav>
     </header>
 
-    div class="contenido-principal">
+    <div class="contenido-principal">
         <h1>Comentarios: <?= htmlspecialchars($noticia['titulo']) ?></h1>
         
         <?php if ($error): ?>
-            <div class="mensaje error"><?= htmlspecialchars($error) ?></div>
+            <div id="toast" class="toast"><?= htmlspecialchars( $exito) ?></div>
         <?php endif; ?>
         
         <?php if ($exito): ?>
-            <div class="mensaje exito"><?= htmlspecialchars($exito) ?></div>
+            <div id="toast" class="toast"><?= htmlspecialchars($exito) ?></div>
+            <script>
+                setTimeout(() => {
+                    const toast = document.getElementById('toast');
+                    toast.classList.add('visible');
+                    setTimeout(() => {
+                        toast.classList.remove('visible');
+                    }, 3000);
+                }, 100);
+            </script>
         <?php endif; ?>
         
         <form method="POST" class="formulario-comentario">

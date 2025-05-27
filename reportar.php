@@ -3,6 +3,7 @@ session_start();
 include 'conexion.php';
 
 if (!isset($_SESSION['usuario_id'])) {
+  $_SESSION['reportar'] = "Para poder reportar una noticia, debes iniciar sesión primero.";
     header("Location: login.php");
     exit();
 }
